@@ -65,74 +65,54 @@ Reflection
 BorrowEquipmentService,  this is the class that checks everything and creates the borrowing.
 >>>>>>>> 7d355c7d781df832b7aacf266203c07c23687da0:Readme.md
 
-## Lab Activity 2 — Avalonia UI and MVVM
+Lab Activity 2 — Avalonia UI and MVVM
 
-### 1. Desktop Project
+1. Desktop Project
+Desktop - this is where the UI lives (the Views and ViewModels). It uses Application and Infrastructure to actually work, but Domain and Application have no idea Desktop even exists.
 
-EquipmentBorrowing.Desktop contains the graphical interface. It references Application and
-Infrastructure so it can display data and trigger operations, but Domain and Application
-have no reference back to Desktop or Avalonia — they remain completely UI-independent.
-
-### 2. Updated Architecture
+2. Updated Architecture
 
 Avalonia View
-      │  Binding / Command
-      ▼
+      │
+      v
   ViewModel
-      │  Application Operation
-      ▼
+      │
+      v
 Application Service
       │
-      ├──────► Domain
+      ├──► Domain
       │
-      ▼
+      v
 Repository Interface
-      ▲
+      ^
       │
 Infrastructure Implementation
 
-### 3. Borrow Equipment Flow
+explanation:
+The View is just what you see on screen. The ViewModel grabs what the user picked and calls the Application service. The service checks if it's allowed and talks to the repository to get/save stuff. Infrastructure is what actually does the storing.
 
-The user selects a student, equipment, and return date in EquipmentView, then presses
-"Borrow Equipment." This runs EquipmentViewModel.BorrowAsync, which checks that a student
-and equipment were actually selected (presentation validation only), then calls
-BorrowEquipmentService.ExecuteAsync. That service checks all the business rules and either
-creates a Borrowing or returns a failure reason. The ViewModel displays the result in
-StatusMessage and refreshes the equipment list.
+3. Borrow Equipment Flow
+User picks a student, equipment, and a return date, then hits Borrow. The ViewModel checks nothing's empty first, then asks BorrowEquipmentService to actually do it. The service checks all the rules and either creates the borrowing or says why it can't. Whatever happens shows up on screen.
 
-### 4. Return Equipment Flow
+4. Return Equipment Flow
+Same idea but for returning. User picks a borrowing and hits Return. ReturnEquipmentService marks it as returned and makes the equipment available again. Result shows up on screen too.
 
-The user selects an active borrowing in BorrowingsView and presses "Return Equipment."
-BorrowingsViewModel.ReturnAsync calls ReturnEquipmentService.ExecuteAsync, which finds the
-borrowing, marks it Returned, and marks the equipment Available again. The result is shown
-in StatusMessage, and the list refreshes.
+5. Architectural Reflection
 
-### 5. Architectural Reflection
+1. Why shouldn't the View talk to a repository directly?
+- The View's only job is to show stuff, not fetch data. Keeping it separate means we can change the UI without messing up how data works.
 
-1. Why should the View not call a repository directly?
-   The View only knows how to display things and react to user input — it shouldn't know
-   about data storage. Keeping that logic in the ViewModel/Application layer means the UI
-   can change completely without touching how data is fetched or validated.
+2. Why shouldn't business rules be in the ViewModel?
+- If we put the rules there, we'd have to copy them again for any new UI later. Keeping them in one place means every UI follows the same rules.
 
-2. Why should business rules not be implemented in the ViewModel?
-   If the rules were duplicated in the ViewModel, they'd need to be kept in sync with the
-   Application layer's rules, and a second UI (web, mobile) would have to repeat them again.
-   Keeping rules in one place (Application/Domain) means every entry point uses the same logic.
+3. What's the ViewModel actually for?
+- It holds what the user picked, shows messages, and calls the Application service. It doesn't decide anything on its own.
 
-3. What is the responsibility of the ViewModel?
-   To hold presentation state (selected items, status messages), expose commands the View
-   can bind to, and call into Application services — never to decide the business outcome itself.
+4. Why does Application not need to know Avalonia exists?
+- Because it only depends on Domain and its own interfaces, nothing about Desktop or Avalonia.
 
-4. Why can the existing Application layer work without knowing that Avalonia is being used?
-   Because Application only depends on Domain and its own repository interfaces — it never
-   references Desktop or any UI framework, so it has no idea what's calling it.
+5. Why register everything in one place?
+- So it's easy to see and change what the app needs, instead of digging through every ViewModel to find it.
 
-5. What advantage is gained from registering dependencies in one composition point?
-   All the wiring (which repository implementation, which services) lives in one place
-   (App.axaml.cs), so it's easy to see and change everything the app depends on without
-   hunting through ViewModels for scattered "new SomeService()" calls.
-
-6. If the in-memory repository were replaced by SQLite later, which parts of the current
-   interface should remain largely unchanged?
-   The Views, ViewModels, and Application services would stay the same — only the
-   registrations in App.axaml.cs and the Infrastructure repository classes would change.
+6. If we swapped in SQLite later, what stays the same?
+- Views, ViewModels, and the Application services stay the same. Only Infrastructure and the setup in App.axaml.cs would change.
