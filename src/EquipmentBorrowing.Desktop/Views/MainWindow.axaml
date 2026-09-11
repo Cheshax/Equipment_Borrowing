@@ -1,22 +1,30 @@
 ﻿<Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:EquipmentBorrowing.Desktop.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:views="using:EquipmentBorrowing.Desktop.Views"
         x:Class="EquipmentBorrowing.Desktop.Views.MainWindow"
-        x:DataType="vm:MainViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="EquipmentBorrowing.Desktop">
+        x:DataType="vm:MainWindowViewModel"
+        Title="Campus Equipment Borrowing System"
+        Width="800" Height="500"
+        Background="{StaticResource ColorBackground}">
+  <Grid ColumnDefinitions="200,*">
+    <Border Grid.Column="0" Background="{StaticResource ColorAccent}">
+      <StackPanel Spacing="8" Margin="12">
+        <TextBlock Text="Campus Equipment Borrowing System" FontWeight="Bold" TextWrapping="Wrap"/>
+        <Button Content="Equipment" Command="{Binding ShowEquipmentCommand}" HorizontalAlignment="Stretch"/>
+        <Button Content="Active Borrowings" Command="{Binding ShowBorrowingsCommand}" HorizontalAlignment="Stretch"/>
+      </StackPanel>
+    </Border>
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
-    </Design.DataContext>
-
-    <TextBox Text="{Binding Greeting}"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center" />
-
+    <ContentControl Grid.Column="1" Content="{Binding CurrentView}">
+      <ContentControl.DataTemplates>
+        <DataTemplate DataType="vm:EquipmentViewModel">
+          <views:EquipmentView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:BorrowingsViewModel">
+          <views:BorrowingsView/>
+        </DataTemplate>
+      </ContentControl.DataTemplates>
+    </ContentControl>
+  </Grid>
 </Window>
