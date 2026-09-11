@@ -68,7 +68,7 @@ BorrowEquipmentService,  this is the class that checks everything and creates th
 Lab Activity 2 — Avalonia UI and MVVM
 
 1. Desktop Project
-Desktop - this is where the UI lives (the Views and ViewModels). It uses Application and Infrastructure to actually work, but Domain and Application have no idea Desktop even exists.
+Desktop - this is where the User Interface lives (the Views and ViewModels). It references Application and Infrastructure to actually work, but Domain and Application have no reference back to Desktop or Avalonia.
 
 2. Updated Architecture
 
@@ -99,20 +99,20 @@ Same idea but for returning. User picks a borrowing and hits Return. ReturnEquip
 
 5. Architectural Reflection
 
-1. Why shouldn't the View talk to a repository directly?
-- The View's only job is to show stuff, not fetch data. Keeping it separate means we can change the UI without messing up how data works.
+    1. Why shouldn't the View talk to a repository directly?
+        - The View's only job is to show stuff, not fetch data. Keeping it separate means we can change the UI without messing up how data works.
+   
+    2. Why shouldn't business rules be in the ViewModel?
+        - If we put the rules there, we'd have to copy them again for any new UI later. Keeping them in one place means every UI follows the same rules.
 
-2. Why shouldn't business rules be in the ViewModel?
-- If we put the rules there, we'd have to copy them again for any new UI later. Keeping them in one place means every UI follows the same rules.
+    3. What's the ViewModel actually for?
+        - It holds what the user picked, shows messages, and calls the Application service. It doesn't decide anything on its own.
 
-3. What's the ViewModel actually for?
-- It holds what the user picked, shows messages, and calls the Application service. It doesn't decide anything on its own.
+    4. Why does Application not need to know Avalonia exists?
+        - Because it only depends on Domain and its own interfaces, nothing about Desktop or Avalonia.
 
-4. Why does Application not need to know Avalonia exists?
-- Because it only depends on Domain and its own interfaces, nothing about Desktop or Avalonia.
-
-5. Why register everything in one place?
-- So it's easy to see and change what the app needs, instead of digging through every ViewModel to find it.
-
-6. If we swapped in SQLite later, what stays the same?
-- Views, ViewModels, and the Application services stay the same. Only Infrastructure and the setup in App.axaml.cs would change.
+    5. Why register everything in one place?
+        - So it's easy to see and change what the app needs, instead of digging through every ViewModel to find it.
+    
+    6. If we swapped in SQLite later, what stays the same?
+        - Views, ViewModels, and the Application services stay the same. Only Infrastructure and the setup in App.axaml.cs would change.
