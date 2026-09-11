@@ -1,9 +1,11 @@
-﻿namespace EquipmentBorrowing.Domain;
+using System.Xml.Linq;
 
-public class Student
+namespace EquipmentBorrowing.Domain;
+
+public class  Student
 {
-    public int Id { get; }
-    public string name { get; }
+    public int Id { get;}
+    public string name { get;}
     public bool IsAllowedtoBorrow { get; private set; }
 
     public Student(int id, string name, bool isAllowedtoBorrow = true)
