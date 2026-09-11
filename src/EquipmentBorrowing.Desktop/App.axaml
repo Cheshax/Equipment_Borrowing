@@ -1,15 +1,39 @@
 ﻿<Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="EquipmentBorrowing.Desktop.App"
-             xmlns:local="using:EquipmentBorrowing.Desktop"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.DataTemplates>
-        <local:ViewLocator />
-    </Application.DataTemplates>
+  <Application.Resources>
+    <SolidColorBrush x:Key="ColorPrimary">#D88AA0</SolidColorBrush>
+    <SolidColorBrush x:Key="ColorSecondary">#E8B4C0</SolidColorBrush>
+    <SolidColorBrush x:Key="ColorAccent">#F2C6D3</SolidColorBrush>
+    <SolidColorBrush x:Key="ColorBackground">#FDF0F3</SolidColorBrush>
+  </Application.Resources>
 
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
+  <Application.Styles>
+    <FluentTheme />
+
+    <Style Selector="Button">
+      <Setter Property="Padding" Value="12,6"/>
+      <Setter Property="Margin" Value="0,4"/>
+      <Setter Property="CornerRadius" Value="4"/>
+      <Setter Property="Background" Value="{StaticResource ColorPrimary}"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+
+    <Style Selector="Button:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource ColorSecondary}"/>
+    </Style>
+
+    <Style Selector="TextBlock.heading">
+      <Setter Property="FontSize" Value="18"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Margin" Value="0,0,0,8"/>
+    </Style>
+
+    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+      <Setter Property="Background" Value="{StaticResource ColorAccent}"/>
+    </Style>
+  </Application.Styles>
 </Application>
